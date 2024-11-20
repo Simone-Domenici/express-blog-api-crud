@@ -3,16 +3,16 @@ const router = express.Router()
 const postController = require('../controllers/postController.js')
 
 // Index
-router.get('/' , postController)
+router.get('/', postController.index)
 // Show
-router.get('/:id' , postController)
-// Create
-router.post('/' , postController)
+router.get('/:identifier' , postController.show)
+// Store
+router.post('/' , postController.store)
 // Update
-router.put('/:id' , postController)
+router.put('/:id' , postController.update)
 // Modify
-router.patch('/:id' , postController)
-// Delete
-router.delete('/:id' , postController)
+router.patch('/:id' , postController.modify)
+// Destroy
+router.delete('/:identifier' , postController.destroy)
 
 module.exports = router

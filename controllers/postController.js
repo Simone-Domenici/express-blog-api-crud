@@ -9,14 +9,25 @@ function index(req,res) {
 		filteredPosts = posts.filter((post) => {
 			return post.tags.includes(req.query.tag.toLowerCase())
 		})
+    }  
+    res.json(filteredPosts)
 }
 // Show
 function show(req,res) {
-    const id = parseInt(req.params.id)
-	console.log(`Ecco il post con id: ${id}`)
+    const identifier = req.params.identifier;
+    console.log(`Mostro il post con id: ${identifier}`)
 
-	const post = posts.find((post) => post.id === id)
-	let result = post
+    const findPost = (idOrSlug) => {
+        if (!isNaN(idOrSlug)) {
+            // Cerca per ID
+            return posts.find(post => post.id === parseInt(idOrSlug));
+        } else {
+            // Cerca per slug
+            return posts.find(post => post.slug === idOrSlug.toLowerCase());
+        }
+    };
+    const post = findPost(identifier);
+    let result = post
 
 	if (!post) {
 		console.log('Post non trovato')
@@ -36,20 +47,29 @@ function store(req,res) {
 }
 // Update
 function update(req,res) {
-    const id = req.params.id
+    const slug = req.params.slug
     res.send(`Aggiornamento del post ${id}`)
 }
 // Modify
 function modify(req,res) {
-    const id = req.params.id
     res.send(`Modifica del post ${id}`)
 }
 // Destroy
 function destroy(req,res) {
-    const id = parseInt(req.params.id)
-	console.log(`Elimino il post con id: ${id}`)
+	const identifier = req.params.identifier;
+    console.log(`Elimino il post con id: ${identifier}`)
 
-	const postsIndex = posts.findIndex((post) => post.id === id)
+    const findPost = (idOrSlug) => {
+        if (!isNaN(idOrSlug)) {
+            // Cerca per ID
+            return posts.find(post => post.id === parseInt(idOrSlug));
+        } else {
+            // Cerca per slug
+            return posts.find(post => post.slug === idOrSlug.toLowerCase());
+        }
+        };
+    const post = findPost(identifier);
+    const postsIndex = posts.indexOf(post)
 
 	if (postsIndex === -1) {
 		res.status(404)
