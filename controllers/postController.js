@@ -36,12 +36,13 @@ function store(req,res) {
 }
 // Update
 function update(req,res) {
-    const slug = req.params.slug
-    res.send(`Aggiornamento del post ${slug}`)
+    const id = req.params.id
+    res.send(`Aggiornamento del post ${id}`)
 }
 // Modify
 function modify(req,res) {
-    res.send(`Modifica del post ${slug}`)
+    const id = req.params.id
+    res.send(`Modifica del post ${id}`)
 }
 // Destroy
 function destroy(req,res) {
