@@ -181,7 +181,7 @@ function modify(req, res) {
         const errors = []
 
         if (!title) {
-            errors.push('Name is required')
+            errors.push('Title is required')
         }
 
         if (!image) {
@@ -189,7 +189,7 @@ function modify(req, res) {
         }
 
         if (!content) {
-            errors.push('Ingredients is required')
+            errors.push('Content is required')
         }
 
         if (!tags) {
