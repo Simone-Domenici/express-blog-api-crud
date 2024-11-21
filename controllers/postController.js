@@ -1,4 +1,5 @@
 const posts = require('../data/posts.js')
+let lastIndex = posts.at(-1).id
 
 // Index
 function index(req,res) {
@@ -7,8 +8,7 @@ function index(req,res) {
 
 	if (req.query.tag) {
 		filteredPosts = posts.filter((post) => {
-            const formattedTags = post.tags.toLowerCase()
-			return formattedTags.includes(req.query.tag.toLowerCase())
+			return post.tags.includes(req.query.tag.toLowerCase())
 		})
     }  
     res.json(filteredPosts)
@@ -44,8 +44,36 @@ function show(req,res) {
 }
 // Store
 function store(req,res) {
-    res.send('Creazione del post')
+    console.log('Creazione del post')
+    console.log(req.body)
+    const { title, content, image, tags } = req.body
+
+	const errors = validate(req)
+
+	if (errors.length) {
+
+		res.status(400)
+
+		return res.json({
+			error: 'Invalid request',
+			messages: errors,
+		})
+	}
+
+	lastIndex++
+
+	const post = {
+		id: lastIndex,
+		title,
+		content,
+		image,
+        tags: [tags]
+	}
+
+	posts.push(post)
+	res.status(201).send(post)
 }
+
 // Update
 function update(req,res) {
     const slug = req.params.slug
@@ -85,3 +113,27 @@ function destroy(req,res) {
 }
 
 module.exports = { index, show, store, update, modify, destroy }
+
+function validate(req) {
+	const { title, content, image, tags } = req.body
+
+	const errors = []
+
+	if (!title) {
+		errors.push('Name is required')
+	}
+
+	if (!image) {
+		errors.push('Image is required')
+	}
+
+	if (!content) {
+		errors.push('Ingredients is required')
+	}
+
+    if (!tags) {
+		errors.push('Tag is required')
+	}
+
+	return errors
+}
