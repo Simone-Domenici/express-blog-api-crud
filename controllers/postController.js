@@ -7,7 +7,8 @@ function index(req,res) {
 
 	if (req.query.tag) {
 		filteredPosts = posts.filter((post) => {
-			return post.tags.includes(req.query.tag.toLowerCase())
+            const formattedTags = post.tags.toLowerCase()
+			return formattedTags.includes(req.query.tag.toLowerCase())
 		})
     }  
     res.json(filteredPosts)
