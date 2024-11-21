@@ -78,8 +78,40 @@ function store(req,res) {
 
 // Update
 function update(req,res) {
-    const slug = req.params.slug
-    res.send(`Aggiornamento del post ${id}`)
+    const id = parseInt(req.params.id)
+    console.log(`Aggiornamento del post ${id}`)
+
+	const errors = validate(req)
+
+	if (errors.length) {
+		res.status(400)
+
+		return res.json({
+			error: 'Invalid request',
+			messages: errors,
+		})
+	}
+
+	const post = posts.find((post) => post.id === id)
+
+	if (!post) {
+		res.status(404)
+
+		return res.json({
+			error: 'Post not found',
+			message: 'Il post non è stato trovato.',
+		})
+	}
+
+	const { title, image, content, tags } = req.body
+
+	post.title = title
+    post.slug = createSlug(title)
+	post.content = content
+	post.image = image
+    post.tags = tags
+
+	res.json(post)
 }
 // Modify
 function modify(req,res) {
