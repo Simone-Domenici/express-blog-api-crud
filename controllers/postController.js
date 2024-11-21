@@ -61,10 +61,12 @@ function store(req,res) {
 	}
 
 	lastIndex++
+    const slug = createSlug(title)
 
 	const post = {
 		id: lastIndex,
 		title,
+        slug, 
 		content,
 		image,
         tags: [tags]
@@ -83,6 +85,7 @@ function update(req,res) {
 function modify(req,res) {
     res.send(`Modifica del post ${id}`)
 }
+
 // Destroy
 function destroy(req,res) {
 	const identifier = req.params.identifier;
@@ -114,6 +117,8 @@ function destroy(req,res) {
 
 module.exports = { index, show, store, update, modify, destroy }
 
+// Funzioni
+
 function validate(req) {
 	const { title, content, image, tags } = req.body
 
@@ -136,4 +141,15 @@ function validate(req) {
 	}
 
 	return errors
+}
+
+
+function createSlug(title) {
+    // Rimuovi caratteri speciali e accent
+    const slug = title.toLowerCase()
+                        .replace(/[^\w\s-]/g, '') // Rimuovo caratteri non alfanumerici, spazi e trattini
+                        .replace(/\s+/g, '-') // Sostituisco spazi multipli con un singolo trattino
+                        .replace(/-+/g, '-'); // Rimuovo trattini multipli
+
+    return slug;
 }
