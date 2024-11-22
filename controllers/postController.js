@@ -15,37 +15,11 @@ function index(req, res) {
 }
 // Show
 function show(req, res) {
-    const identifier = req.params.identifier;
-    console.log(`Mostro il post con id: ${identifier}`)
-
-    const findPost = (idOrSlug) => {
-        if (!isNaN(idOrSlug)) {
-            // Cerca per ID
-            return posts.find(post => post.id === parseInt(idOrSlug));
-        } else {
-            // Cerca per slug
-            return posts.find(post => post.slug === idOrSlug.toLowerCase());
-        }
-    };
-    const post = findPost(identifier);
-    let result = post
-
-    if (!post) {
-        console.log('Post non trovato')
-
-        res.status(404)
-        result = {
-            error: 'Post not found',
-            message: 'Il post non è stato trovato.',
-        }
-    }
-
-    res.json(result)
+    res.json(req.post)
 }
 // Store
 function store(req, res) {
     console.log('Creazione del post')
-    console.log(req.body)
     const { title, content, image, tags } = req.body
 
     const errors = validate(req)
@@ -78,8 +52,6 @@ function store(req, res) {
 
 // Update
 function update(req, res) {
-    const id = parseInt(req.params.id)
-    console.log(`Aggiornamento del post ${id}`)
 
     const errors = validate(req)
 
@@ -92,81 +64,35 @@ function update(req, res) {
         })
     }
 
-    const post = posts.find((post) => post.id === id)
-
-    if (!post) {
-        res.status(404)
-
-        return res.json({
-            error: 'Post not found',
-            message: 'Il post non è stato trovato.',
-        })
-    }
-
     const { title, image, content, tags } = req.body
 
-    post.title = title
-    post.slug = createSlug(title)
-    post.content = content
-    post.image = image
-    post.tags = tags
+    req.post.title = title
+    req.post.slug = createSlug(title)
+    req.post.content = content
+    req.post.image = image
+    req.post.tags = tags
 
-    res.json(post)
+    res.json(req.post)
 }
 // Modify
 function modify(req, res) {
-    const id = parseInt(req.params.id)
-    console.log(`Modifica del post ${id}`)
-
-    const post = posts.find((post) => post.id === id)
-
-    if (!post) {
-        res.status(404)
-
-        return res.json({
-            error: 'Post not found',
-            message: 'Il post non è stato trovato.',
-        })
-    }
-
     const { title, image, content, tags } = req.body
 
     if (title) {
-    post.title = title
-    post.slug = createSlug(title)
+    req.post.title = title
+    req.post.slug = createSlug(title)
     }
-    if (content) post.content = content
-    if (image) post.image = image
-    if (tags) post.tags = tags
+    if (content) req.post.content = content
+    if (image) req.post.image = image
+    if (tags) req.post.tags = tags
 
-    res.json(post)
+    res.json(req.post)
     }
 
     // Destroy
     function destroy(req, res) {
-        const identifier = req.params.identifier;
-        console.log(`Elimino il post con id: ${identifier}`)
-
-        const findPost = (idOrSlug) => {
-            if (!isNaN(idOrSlug)) {
-                // Cerca per ID
-                return posts.find(post => post.id === parseInt(idOrSlug));
-            } else {
-                // Cerca per slug
-                return posts.find(post => post.slug === idOrSlug.toLowerCase());
-            }
-        };
-        const post = findPost(identifier);
-        const postsIndex = posts.indexOf(post)
-
-        if (postsIndex === -1) {
-            res.status(404)
-
-            return res.json({
-                error: 'Post not found',
-                message: 'Il post non è stato trovato.',
-            })
-        }
+        const post = req.post
+        const postsIndex = posts.findIndex((p) => p.id === post.id || p.slug === post.slug)
         posts.splice(postsIndex, 1)
         res.sendStatus(204)
     }
@@ -193,7 +119,7 @@ function modify(req, res) {
         }
 
         if (!tags) {
-            errors.push('Tag is required')
+            errors.push('Tags is required')
         }
 
         return errors
