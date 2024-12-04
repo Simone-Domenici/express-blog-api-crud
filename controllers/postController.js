@@ -20,7 +20,7 @@ function show(req, res) {
 // Store
 function store(req, res) {
     console.log('Creazione del post')
-    const { title, content, image, tags } = req.body
+    const { title, content, image, tags, category, published = true } = req.body
 
     const errors = validate(req)
 
@@ -43,7 +43,9 @@ function store(req, res) {
         slug,
         content,
         image,
-        tags: [tags]
+        tags: [tags],
+        category,
+        published
     }
 
     posts.push(post)
@@ -102,7 +104,7 @@ function modify(req, res) {
     // Funzioni
 
     function validate(req) {
-        const { title, content, image, tags } = req.body
+        const { title, content, image, tags, category, published = true } = req.body
 
         const errors = []
 
@@ -110,8 +112,8 @@ function modify(req, res) {
             errors.push('Title is required')
         }
 
-        if (!image) {
-            errors.push('Image is required')
+        if (!category) {
+            errors.push('Category is required')
         }
 
         if (!content) {
